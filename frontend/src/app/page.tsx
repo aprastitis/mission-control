@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import TaskCard from "../components/TaskCard";
 import CreateTaskForm from "../components/CreateTaskForm";
 import { useTasks } from "../hooks/useTasks";
@@ -83,128 +84,231 @@ export default function Home() {
       </div>
 
       {/* Kanban board */}
-      <div className="h-screen grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8">
+      <motion.div
+        className="h-screen grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         {/* Backlog Column */}
-        <div
+        <motion.div
           data-testid="column-backlog"
-          className={`h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6 transition-all ${
-            draggingOver === 'backlog' ? 'bg-blue-100/50 border-blue-400 opacity-50' : ''
+          className={`h-full rounded-3xl p-6 bg-neu-glass dark:bg-neu-glass-dark shadow-neu-convex dark:shadow-neu-convex-dark border border-slate-200/50 dark:border-slate-700 transition-all ${
+            draggingOver === 'backlog' ? 'shadow-neu-pressed dark:shadow-neu-pressed-dark scale-105' : ''
           }`}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop('backlog')}
           onDragEnter={handleDragEnter('backlog')}
           onDragLeave={handleDragLeave}
+          whileHover={{ scale: 1.01 }}
+          transition={{ duration: 0.2 }}
         >
-          <div className="flex justify-between items-center mb-4">
-            <h4 className="font-bold">Backlog</h4>
-            <button
+          <div className="flex justify-between items-center mb-6">
+            <h4 className="text-responsive-xl font-bold">📋 Backlog</h4>
+            <motion.button
               data-testid="add-task"
               onClick={() => setIsModalOpen(true)}
-              className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors"
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-responsive-sm rounded-xl shadow-neu-convex dark:shadow-neu-convex-dark hover:shadow-neu-pressed dark:hover:shadow-neu-pressed-dark transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              + Add Task
-            </button>
+              ➕ Add Task
+            </motion.button>
           </div>
           <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
             {tasks.filter(task => task.status === 'backlog').length === 0 ? (
-              <div className="text-center text-gray-500 dark:text-gray-400 py-8">No tasks in backlog</div>
+              <div className="text-center text-responsive-base text-gray-500 dark:text-gray-400 py-8">No tasks in backlog</div>
             ) : (
-              tasks.filter(task => task.status === 'backlog').map(task => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onDelete={removeTask}
-                  onEdit={editTask}
-                />
-              ))
+              <motion.div
+                className="space-y-4"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1
+                    }
+                  }
+                }}
+              >
+                {tasks.filter(task => task.status === 'backlog').map(task => (
+                  <motion.div
+                    key={task.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 }
+                    }}
+                  >
+                    <TaskCard
+                      task={task}
+                      onDelete={removeTask}
+                      onEdit={editTask}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* In Progress Column */}
-        <div
+        <motion.div
           data-testid="column-inprogress"
-          className={`h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6 transition-all ${
-            draggingOver === 'inprogress' ? 'bg-blue-100/50 border-blue-400 opacity-50' : ''
+          className={`h-full rounded-3xl p-6 bg-neu-glass dark:bg-neu-glass-dark shadow-neu-convex dark:shadow-neu-convex-dark border border-slate-200/50 dark:border-slate-700 transition-all ${
+            draggingOver === 'inprogress' ? 'shadow-neu-pressed dark:shadow-neu-pressed-dark scale-105' : ''
           }`}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop('inprogress')}
           onDragEnter={handleDragEnter('inprogress')}
           onDragLeave={handleDragLeave}
+          whileHover={{ scale: 1.01 }}
+          transition={{ duration: 0.2 }}
         >
-          <h4 className="font-bold mb-4">In Progress</h4>
+          <h4 className="text-responsive-xl font-bold mb-6">🚀 In Progress</h4>
           <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
             {tasks.filter(task => task.status === 'inprogress').length === 0 ? (
-              <div className="text-center text-gray-500 dark:text-gray-400 py-8">No tasks in progress</div>
+              <div className="text-center text-responsive-base text-gray-500 dark:text-gray-400 py-8">No tasks in progress</div>
             ) : (
-              tasks.filter(task => task.status === 'inprogress').map(task => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onDelete={removeTask}
-                  onEdit={editTask}
-                />
-              ))
+              <motion.div
+                className="space-y-4"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1
+                    }
+                  }
+                }}
+              >
+                {tasks.filter(task => task.status === 'inprogress').map(task => (
+                  <motion.div
+                    key={task.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 }
+                    }}
+                  >
+                    <TaskCard
+                      task={task}
+                      onDelete={removeTask}
+                      onEdit={editTask}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Need Approval Column */}
-        <div
+        <motion.div
           data-testid="column-needapproval"
-          className={`h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6 transition-all ${
-            draggingOver === 'needapproval' ? 'bg-blue-100/50 border-blue-400 opacity-50' : ''
+          className={`h-full rounded-3xl p-6 bg-neu-glass dark:bg-neu-glass-dark shadow-neu-convex dark:shadow-neu-convex-dark border border-slate-200/50 dark:border-slate-700 transition-all ${
+            draggingOver === 'needapproval' ? 'shadow-neu-pressed dark:shadow-neu-pressed-dark scale-105' : ''
           }`}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop('needapproval')}
           onDragEnter={handleDragEnter('needapproval')}
           onDragLeave={handleDragLeave}
+          whileHover={{ scale: 1.01 }}
+          transition={{ duration: 0.2 }}
         >
-          <h4 className="font-bold mb-4">Need Approval</h4>
+          <h4 className="text-responsive-xl font-bold mb-6">⏳ Need Approval</h4>
           <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
             {tasks.filter(task => task.status === 'needapproval').length === 0 ? (
-              <div className="text-center text-gray-500 dark:text-gray-400 py-8">No tasks need approval</div>
+              <div className="text-center text-responsive-base text-gray-500 dark:text-gray-400 py-8">No tasks need approval</div>
             ) : (
-              tasks.filter(task => task.status === 'needapproval').map(task => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onDelete={removeTask}
-                  onEdit={editTask}
-                />
-              ))
+              <motion.div
+                className="space-y-4"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1
+                    }
+                  }
+                }}
+              >
+                {tasks.filter(task => task.status === 'needapproval').map(task => (
+                  <motion.div
+                    key={task.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 }
+                    }}
+                  >
+                    <TaskCard
+                      task={task}
+                      onDelete={removeTask}
+                      onEdit={editTask}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Done Column */}
-        <div
+        <motion.div
           data-testid="column-done"
-          className={`h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6 transition-all ${
-            draggingOver === 'done' ? 'bg-blue-100/50 border-blue-400 opacity-50' : ''
+          className={`h-full rounded-3xl p-6 bg-neu-glass dark:bg-neu-glass-dark shadow-neu-convex dark:shadow-neu-convex-dark border border-slate-200/50 dark:border-slate-700 transition-all ${
+            draggingOver === 'done' ? 'shadow-neu-pressed dark:shadow-neu-pressed-dark scale-105' : ''
           }`}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop('done')}
           onDragEnter={handleDragEnter('done')}
           onDragLeave={handleDragLeave}
+          whileHover={{ scale: 1.01 }}
+          transition={{ duration: 0.2 }}
         >
-          <h4 className="font-bold mb-4">Done</h4>
+          <h4 className="text-responsive-xl font-bold mb-6">✅ Done</h4>
           <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
             {tasks.filter(task => task.status === 'done').length === 0 ? (
-              <div className="text-center text-gray-500 dark:text-gray-400 py-8">No completed tasks</div>
+              <div className="text-center text-responsive-base text-gray-500 dark:text-gray-400 py-8">No completed tasks</div>
             ) : (
-              tasks.filter(task => task.status === 'done').map(task => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onDelete={removeTask}
-                  onEdit={editTask}
-                />
-              ))
+              <motion.div
+                className="space-y-4"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1
+                    }
+                  }
+                }}
+              >
+                {tasks.filter(task => task.status === 'done').map(task => (
+                  <motion.div
+                    key={task.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 }
+                    }}
+                  >
+                    <TaskCard
+                      task={task}
+                      onDelete={removeTask}
+                      onEdit={editTask}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
             )}
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Create Task Modal */}
       {isModalOpen && (

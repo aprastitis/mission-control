@@ -3,12 +3,12 @@ import { test, expect } from '@playwright/test';
 test('Kanban CRUD flow', async ({ page }) => {
   await page.goto('/');
   await page.waitForLoadState('networkidle');
-  await expect(page.locator('text=Backlog')).toBeVisible();
+  await expect(page.locator('[data-testid="column-backlog"]')).toBeVisible();
   await page.screenshot({ path: 'debug-start.png' });
 
   // Check column styles
   const col = page.locator('[data-testid="column-backlog"]');
-  await expect(col).toHaveClass(/shadow-2xl/);
+  await expect(col).toHaveClass(/shadow-neu-convex/);
   const badge = page.locator('[data-testid="add-task"]');
   await expect(badge).toBeVisible();
 

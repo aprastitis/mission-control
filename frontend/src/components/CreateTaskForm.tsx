@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 interface CreateTaskFormProps {
   onSubmit: (task: { title: string; description: string; priority?: 'low' | 'medium' | 'high'; due_date?: string; labels?: string }) => void;
@@ -67,16 +68,26 @@ export default function CreateTaskForm({ onSubmit, onClose }: CreateTaskFormProp
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onKeyDown={handleKeyDown}>
-      <form
+    <motion.div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      onKeyDown={handleKeyDown}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.form
         onSubmit={handleSubmit}
-        className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl max-w-md mx-4 w-full"
+        className="bg-neu-glass dark:bg-neu-glass-dark p-8 rounded-3xl shadow-neu-convex dark:shadow-neu-convex-dark border border-slate-200/50 dark:border-slate-700 max-w-md mx-4 w-full"
         aria-labelledby="create-task-title"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        transition={{ duration: 0.3 }}
       >
-        <h2 id="create-task-title" className="text-xl font-bold mb-4">Create New Task</h2>
-        <div className="space-y-4">
+        <h2 id="create-task-title" className="text-responsive-2xl font-bold mb-6 text-center">📝 Create New Task</h2>
+        <div className="space-y-6">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium mb-1">Title *</label>
+            <label htmlFor="title" className="block text-responsive-sm font-medium mb-2">Title *</label>
             <input
               data-testid="task-title"
               ref={titleRef}
@@ -84,28 +95,28 @@ export default function CreateTaskForm({ onSubmit, onClose }: CreateTaskFormProp
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-neu-convex dark:shadow-neu-convex-dark focus:shadow-neu-inset dark:focus:shadow-neu-inset-dark focus:outline-none"
               required
             />
           </div>
           <div>
-            <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
+            <label htmlFor="description" className="block text-responsive-sm font-medium mb-2">Description</label>
             <textarea
               data-testid="task-description"
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-neu-convex dark:shadow-neu-convex-dark focus:shadow-neu-inset dark:focus:shadow-neu-inset-dark focus:outline-none"
               rows={3}
             />
           </div>
           <div>
-            <label htmlFor="priority" className="block text-sm font-medium mb-1">Priority</label>
+            <label htmlFor="priority" className="block text-responsive-sm font-medium mb-2">Priority</label>
             <select
               id="priority"
               value={priority}
               onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-neu-convex dark:shadow-neu-convex-dark focus:shadow-neu-inset dark:focus:shadow-neu-inset-dark focus:outline-none"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -113,46 +124,50 @@ export default function CreateTaskForm({ onSubmit, onClose }: CreateTaskFormProp
             </select>
           </div>
           <div>
-            <label htmlFor="dueDate" className="block text-sm font-medium mb-1">Due Date</label>
+            <label htmlFor="dueDate" className="block text-responsive-sm font-medium mb-2">Due Date</label>
             <input
               id="dueDate"
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-neu-convex dark:shadow-neu-convex-dark focus:shadow-neu-inset dark:focus:shadow-neu-inset-dark focus:outline-none"
             />
           </div>
           <div>
-            <label htmlFor="labels" className="block text-sm font-medium mb-1">Labels (comma-separated)</label>
+            <label htmlFor="labels" className="block text-responsive-sm font-medium mb-2">Labels (comma-separated)</label>
             <input
               id="labels"
               type="text"
               value={labels}
               onChange={(e) => setLabels(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-neu-convex dark:shadow-neu-convex-dark focus:shadow-neu-inset dark:focus:shadow-neu-inset-dark focus:outline-none"
               placeholder="e.g. bug, feature"
             />
           </div>
 
         </div>
-        <div className="flex justify-end gap-2 mt-6">
-          <button
+        <div className="flex justify-end gap-4 mt-8">
+          <motion.button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="px-6 py-3 text-gray-600 dark:text-gray-400 rounded-xl shadow-neu-convex dark:shadow-neu-convex-dark hover:shadow-neu-pressed dark:hover:shadow-neu-pressed-dark transition-all text-responsive-sm"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            Cancel
-          </button>
-          <button
+            ❌ Cancel
+          </motion.button>
+          <motion.button
             data-testid="submit-task"
             type="submit"
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-neu-convex dark:shadow-neu-convex-dark hover:shadow-neu-pressed dark:hover:shadow-neu-pressed-dark transition-all text-responsive-sm"
             disabled={!title.trim()}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            Create Task
-          </button>
+            ➕ Create Task
+          </motion.button>
         </div>
-      </form>
-    </div>
+      </motion.form>
+    </motion.div>
   );
 }
