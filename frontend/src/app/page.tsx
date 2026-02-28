@@ -18,7 +18,7 @@ export default function Home() {
   const { theme, setTheme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [draggingOver, setDraggingOver] = useState<string | null>(null);
-  const { tasks, addTask, editTask, loading, error } = useTasks();
+  const { tasks, addTask, editTask, removeTask, loading, error } = useTasks();
 
   useEffect(() => {
     setMounted(true);
