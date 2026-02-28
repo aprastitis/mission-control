@@ -1,17 +1,32 @@
-# MISSION_CONTROL.md
+# MISSION_CONTROL.md — Kanban MVP Complete (2026-02-28)
 
-## Current Status
-- Phase 1 complete (2026-02-28): Next.js frontend (Tailwind, next-themes dark/light/system toggle, builds/runs). FastAPI backend (/health endpoint). Monorepo git init.
+## Status: ✅ All Phases Done
+| Phase | Feature | Commit |
+|-------|---------|--------|
+| 1 | Scaffold (Next.js + FastAPI monorepo, dark toggle) | init: project scaffold |
+| 2 | 4-column layout (Backlog/In Progress/Need Approval/Done) | feat: kanban board layout |
+| 3 | TaskCard component | feat: task card component |
+| 4 | Create task modal | feat: create task |
+| 5 | Drag & drop | feat: drag and drop |
+| 6 | localStorage persistence | feat: local storage persistence |
 
-## Test
-- Frontend: cd frontend && npm run dev → localhost:3000 (toggle works)
-- Backend: cd backend && . venv/bin/activate && python main.py → localhost:8000/health
+## Run
+**Frontend:** `cd frontend && npm run dev` → http://localhost:3000  
+**Backend:** `cd backend && . venv/bin/activate && python main.py` → http://localhost:8000/health
 
-## Active Tasks / Current Sprint
-- Phase 2: Kanban board layout (4 columns: Backlog, In Progress, Need Approval, Done)
+## Features
+- Responsive Tailwind grid, light/dark/system theme
+- Create tasks (title/desc/label) → Backlog
+- Drag between columns, visual feedback
+- Persists on refresh
 
-## Upcoming Features Backlog
-- Phases 3-7 per plan
+## Next (Future)
+- Backend API integration
+- Real-time sync
+- GitHub issues import
+- Auth/users
 
 ## Key Decisions
-- Monorepo: frontend (Next.js 15+, TailwindCSS), backend (FastAPI)
+- Monorepo for simplicity
+- HTML5 Drag API (no deps)
+- localStorage (replace w/ DB later)
