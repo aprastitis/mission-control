@@ -2,7 +2,7 @@ module.exports = {
   apps: [{
     name: 'mission-control-frontend',
     script: 'npm',
-    args: 'run dev',
+    args: 'start',
     cwd: '/home/aprastitis/.openclaw/workspace/mission-control/frontend',
     env: {
       HOST: '0.0.0.0',

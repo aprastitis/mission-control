@@ -4,7 +4,7 @@ export interface Task {
   id: number;
   title: string;
   description: string;
-  status: 'backlog' | 'inprogress' | 'needapproval' | 'done';
+  status: 'todo' | 'inprogress' | 'done';
   created_at?: string;
   updated_at?: string;
 }

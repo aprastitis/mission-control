@@ -16,7 +16,11 @@ Base = declarative_base()
 
 # Enum for status
 class TaskStatus(str, enum.Enum):
+    backlog = "backlog"
     todo = "todo"
+    inprogress = "inprogress"
+    needapproval = "needapproval"
+    done = "done"
     inprogress = "inprogress"
     done = "done"
 
@@ -67,7 +71,7 @@ app = FastAPI(title="Mission Control API", version="1.0.0")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
