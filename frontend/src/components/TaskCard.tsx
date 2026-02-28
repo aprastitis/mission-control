@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 
 interface Task {
   id: number;
@@ -15,9 +15,11 @@ interface TaskCardProps {
   task: Task;
   onDelete: (id: number) => void;
   onEdit: (id: number, updates: Partial<Task>) => void;
+  isSelected?: boolean;
+  onSelect?: (id: number) => void;
 }
 
-export default function TaskCard({ task, onDelete, onEdit }: TaskCardProps) {
+export default function TaskCard({ task, onDelete, onEdit, isSelected = false, onSelect }: TaskCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
@@ -26,13 +28,47 @@ export default function TaskCard({ task, onDelete, onEdit }: TaskCardProps) {
   const [editDueDate, setEditDueDate] = useState(task.due_date || '');
   const [editLabels, setEditLabels] = useState(task.labels);
 
+  // Mobile swipe functionality
+  const x = useMotionValue(0);
+  const background = useTransform(x, [-100, 0, 100], ['#ff6b6b', '#ffffff', '#4ecdc4']);
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = x.onChange((value) => {
+      if (value < -50) setSwipeDirection('left');
+      else if (value > 50) setSwipeDirection('right');
+      else setSwipeDirection(null);
+    });
+    return unsubscribe;
+  }, [x]);
+
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
-    setIsDragging(true);
-    e.dataTransfer.setData('text', task.id.toString());
+    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+      // Desktop drag
+      setIsDragging(true);
+      e.dataTransfer.setData('text', task.id.toString());
+    }
   };
 
   const handleDragEnd = () => {
     setIsDragging(false);
+  };
+
+  const handlePanEnd = (event: any, info: PanInfo) => {
+    const threshold = 100;
+    if (info.offset.x < -threshold) {
+      // Swipe left - delete
+      onDelete(task.id);
+    } else if (info.offset.x > threshold) {
+      // Swipe right - edit
+      setIsEditing(true);
+    }
+    // Reset position
+    x.set(0);
+  };
+
+  const handleClick = () => {
+    onSelect?.(task.id);
   };
 
   const handleSave = () => {
@@ -56,9 +92,9 @@ export default function TaskCard({ task, onDelete, onEdit }: TaskCardProps) {
   };
 
   const priorityColor = {
-    low: 'text-green-600',
-    medium: 'text-yellow-600',
-    high: 'text-red-600',
+    low: 'text-green-600 bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-800',
+    medium: 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30 border-yellow-200 dark:border-yellow-800',
+    high: 'text-red-600 bg-red-100 dark:bg-red-900/30 border-red-200 dark:border-red-800',
   };
 
   const labelsArray = task.labels ? task.labels.split(',').map(l => l.trim()).filter(l => l) : [];
@@ -66,16 +102,21 @@ export default function TaskCard({ task, onDelete, onEdit }: TaskCardProps) {
   return (
     <motion.div
       data-testid={`task-${task.id}`}
-      draggable={!isEditing}
+      draggable={!isEditing && typeof window !== 'undefined' && window.innerWidth >= 768}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      className={`group relative rounded-3xl p-6 border border-slate-200/50 dark:border-slate-700 bg-neu-glass dark:bg-neu-glass-dark shadow-neu-convex dark:shadow-neu-convex-dark transition-all duration-300 ${isDragging ? 'opacity-50' : ''} ${!isEditing ? 'cursor-move' : 'cursor-default'}`}
+      onClick={handleClick}
+      className={`group relative rounded-3xl p-6 border backdrop-blur-md bg-white/10 dark:bg-black/10 shadow-glass dark:shadow-glass-dark transition-all duration-300 ${!isEditing ? 'cursor-move' : 'cursor-default'} ${isSelected ? 'ring-2 ring-blue-500 border-blue-500' : 'border-slate-200/50 dark:border-slate-700'}`}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
+      style={{ x }}
+      drag={typeof window !== 'undefined' && window.innerWidth < 768 ? "x" : false} // Only enable drag on mobile
+      dragConstraints={{ left: -150, right: 150 }}
+      onPanEnd={handlePanEnd}
     >
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1">
@@ -121,14 +162,14 @@ export default function TaskCard({ task, onDelete, onEdit }: TaskCardProps) {
 
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         <motion.span
-          className={`text-responsive-xs font-semibold px-3 py-1 rounded-full shadow-neu-inset dark:shadow-neu-inset-dark ${priorityColor[task.priority]} bg-white/20 dark:bg-black/20`}
+          className={`text-responsive-xs font-semibold px-3 py-1 rounded-full border backdrop-blur-sm ${priorityColor[task.priority]}`}
           whileHover={{ scale: 1.05 }}
         >
-          🔴 {task.priority.toUpperCase()}
+          {task.priority === 'high' ? '🔴' : task.priority === 'medium' ? '🟡' : '🟢'} {task.priority.toUpperCase()}
         </motion.span>
         {task.due_date && (
           <motion.span
-            className="text-responsive-xs text-gray-500 px-3 py-1 rounded-full shadow-neu-inset dark:shadow-neu-inset-dark bg-white/20 dark:bg-black/20"
+            className="text-responsive-xs text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700 backdrop-blur-sm bg-white/20 dark:bg-black/20"
             whileHover={{ scale: 1.05 }}
           >
             📅 {new Date(task.due_date).toLocaleDateString()}
@@ -141,7 +182,7 @@ export default function TaskCard({ task, onDelete, onEdit }: TaskCardProps) {
           {labelsArray.map((label, idx) => (
             <motion.span
               key={idx}
-              className="text-responsive-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full shadow-neu-convex dark:shadow-neu-convex-dark"
+              className="text-responsive-xs bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800 backdrop-blur-sm"
               whileHover={{ scale: 1.05 }}
             >
               🏷️ {label}

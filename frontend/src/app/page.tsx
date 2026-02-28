@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import TaskCard from "../components/TaskCard";
 import CreateTaskForm from "../components/CreateTaskForm";
+import Sidebar from "../components/Sidebar";
 import { useTasks } from "../hooks/useTasks";
 
 interface Task {
@@ -22,6 +23,7 @@ export default function Home() {
   const { theme, setTheme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [draggingOver, setDraggingOver] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { tasks, addTask, editTask, removeTask, loading, error } = useTasks();
 
   useEffect(() => {
@@ -60,7 +62,9 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen relative">
+    <div className="h-screen relative flex">
+      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} filters={{priority: [], labels: [], dueDateRange: {start: '', end: ''}}} onFiltersChange={() => {}} />
+      <div className="flex-1">
       {/* Theme toggle top-right */}
       <div className="absolute top-4 right-4 flex gap-2">
         <button
@@ -317,6 +321,7 @@ export default function Home() {
           onClose={() => setIsModalOpen(false)}
         />
       )}
+      </div>
     </div>
   );
 }

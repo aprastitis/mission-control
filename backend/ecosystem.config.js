@@ -2,7 +2,7 @@ module.exports = {
   apps: [{
     name: 'mission-control-backend',
     script: './venv/bin/uvicorn',
-    args: 'main:app --host 0.0.0.0 --port 8000 --reload',
+    args: 'main:app --host 100.117.111.36 --port 8000 --reload',
     cwd: '/home/aprastitis/.openclaw/workspace/mission-control/backend',
     env: {
       PATH: './venv/bin',
