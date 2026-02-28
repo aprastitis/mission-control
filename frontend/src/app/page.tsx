@@ -18,23 +18,25 @@ export default function Home() {
   const { theme, setTheme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [draggingOver, setDraggingOver] = useState<string | null>(null);
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 'backlog-1', title: 'Implement user authentication', description: 'Add login/signup with email and password', label: 'Feature', column: 'backlog' },
-    { id: 'backlog-2', title: 'Design dashboard layout', description: 'Create wireframes for the main dashboard', label: 'Design', column: 'backlog' },
-    { id: 'backlog-3', title: 'Write API documentation', description: 'Document all endpoints with examples', label: 'Documentation', column: 'backlog' },
-    { id: 'inprogress-1', title: 'Setup database schema', description: 'Define tables for users, tasks, projects', label: 'Backend', column: 'inprogress' },
-    { id: 'inprogress-2', title: 'Create responsive navbar', description: 'Make navigation work on mobile', label: 'Frontend', column: 'inprogress' },
-    { id: 'inprogress-3', title: 'Add drag and drop', description: 'Implement DnD for task cards', label: 'Feature', column: 'inprogress' },
-    { id: 'approval-1', title: 'Review pull request #45', description: 'Code review for authentication module', label: 'Review', column: 'approval' },
-    { id: 'approval-2', title: 'Approve budget for server', description: 'Check costs and approve hosting', label: 'Admin', column: 'approval' },
-    { id: 'done-1', title: 'Fix login bug', description: 'Resolved issue with password reset', label: 'Bugfix', column: 'done' },
-    { id: 'done-2', title: 'Update dependencies', description: 'Upgrade to latest versions', label: 'Maintenance', column: 'done' },
-    { id: 'done-3', title: 'Add unit tests', description: 'Coverage for core functions', label: 'Testing', column: 'done' },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('mission-tasks');
+    try {
+      const loadedTasks = stored ? JSON.parse(stored) : [];
+      setTasks(loadedTasks);
+    } catch {
+      setTasks([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('mission-tasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   const handleCreateTask = (newTask: { title: string; description: string; label?: string }) => {
     const task: Task = {
