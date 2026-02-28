@@ -17,11 +17,8 @@ Base = declarative_base()
 # Enum for status
 class TaskStatus(str, enum.Enum):
     backlog = "backlog"
-    todo = "todo"
     inprogress = "inprogress"
     needapproval = "needapproval"
-    done = "done"
-    inprogress = "inprogress"
     done = "done"
 
 # SQLAlchemy model
@@ -30,7 +27,10 @@ class Task(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     description = Column(String)
-    status = Column(String, default=TaskStatus.todo)
+    status = Column(String, default=TaskStatus.backlog)
+    priority = Column(String, default="medium")  # low, medium, high
+    due_date = Column(DateTime(timezone=True), nullable=True)
+    labels = Column(String, default="")  # comma-separated
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -40,7 +40,10 @@ Base.metadata.create_all(bind=engine)
 class TaskBase(BaseModel):
     title: str
     description: str
-    status: TaskStatus = TaskStatus.todo
+    status: TaskStatus = TaskStatus.backlog
+    priority: str = "medium"
+    due_date: Optional[datetime] = None
+    labels: str = ""
 
 class TaskCreate(TaskBase):
     pass
@@ -49,6 +52,9 @@ class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     status: Optional[TaskStatus] = None
+    priority: Optional[str] = None
+    due_date: Optional[datetime] = None
+    labels: Optional[str] = None
 
 class TaskResponse(TaskBase):
     id: int

@@ -1,10 +1,13 @@
-const API_BASE = '/api/v1/tasks';
+const API_BASE = 'http://100.117.111.36:8000/api/v1/tasks';
 
 export interface Task {
   id: number;
   title: string;
   description: string;
-  status: 'todo' | 'inprogress' | 'done';
+  status: 'backlog' | 'inprogress' | 'needapproval' | 'done';
+  priority: 'low' | 'medium' | 'high';
+  due_date?: string;
+  labels: string;
   created_at?: string;
   updated_at?: string;
 }

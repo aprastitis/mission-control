@@ -10,7 +10,10 @@ interface Task {
   id: number;
   title: string;
   description: string;
-  status: 'todo' | 'inprogress' | 'done';
+  status: 'backlog' | 'inprogress' | 'needapproval' | 'done';
+  priority: 'low' | 'medium' | 'high';
+  due_date?: string;
+  labels: string;
 }
 
 export default function Home() {
@@ -24,11 +27,14 @@ export default function Home() {
     setMounted(true);
   }, []);
 
-  const handleCreateTask = async (newTask: { title: string; description: string }) => {
+  const handleCreateTask = async (newTask: { title: string; description: string; priority?: 'low' | 'medium' | 'high'; due_date?: string; labels?: string }) => {
     await addTask({
       title: newTask.title,
       description: newTask.description,
-      status: 'todo',
+      status: 'backlog',
+      priority: newTask.priority || 'medium',
+      due_date: newTask.due_date,
+      labels: newTask.labels || '',
     });
     setIsModalOpen(false);
   };
@@ -77,20 +83,20 @@ export default function Home() {
       </div>
 
       {/* Kanban board */}
-      <div className="h-screen grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-8">
-        {/* To Do Column */}
+      <div className="h-screen grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8">
+        {/* Backlog Column */}
         <div
-          data-testid="column-todo"
+          data-testid="column-backlog"
           className={`h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6 transition-all ${
-            draggingOver === 'todo' ? 'bg-blue-100/50 border-blue-400 opacity-50' : ''
+            draggingOver === 'backlog' ? 'bg-blue-100/50 border-blue-400 opacity-50' : ''
           }`}
           onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDrop('todo')}
-          onDragEnter={handleDragEnter('todo')}
+          onDrop={handleDrop('backlog')}
+          onDragEnter={handleDragEnter('backlog')}
           onDragLeave={handleDragLeave}
         >
           <div className="flex justify-between items-center mb-4">
-            <h4 className="font-bold">To Do</h4>
+            <h4 className="font-bold">Backlog</h4>
             <button
               data-testid="add-task"
               onClick={() => setIsModalOpen(true)}
@@ -100,15 +106,18 @@ export default function Home() {
             </button>
           </div>
           <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
-            {tasks.filter(task => task.status === 'todo').map(task => (
-              <TaskCard
-                key={task.id}
-                id={task.id}
-                title={task.title}
-                description={task.description}
-                onDelete={removeTask}
-              />
-            ))}
+            {tasks.filter(task => task.status === 'backlog').length === 0 ? (
+              <div className="text-center text-gray-500 dark:text-gray-400 py-8">No tasks in backlog</div>
+            ) : (
+              tasks.filter(task => task.status === 'backlog').map(task => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onDelete={removeTask}
+                  onEdit={editTask}
+                />
+              ))
+            )}
           </div>
         </div>
 
@@ -125,15 +134,46 @@ export default function Home() {
         >
           <h4 className="font-bold mb-4">In Progress</h4>
           <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
-            {tasks.filter(task => task.status === 'inprogress').map(task => (
-              <TaskCard
-                key={task.id}
-                id={task.id}
-                title={task.title}
-                description={task.description}
-                onDelete={removeTask}
-              />
-            ))}
+            {tasks.filter(task => task.status === 'inprogress').length === 0 ? (
+              <div className="text-center text-gray-500 dark:text-gray-400 py-8">No tasks in progress</div>
+            ) : (
+              tasks.filter(task => task.status === 'inprogress').map(task => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onDelete={removeTask}
+                  onEdit={editTask}
+                />
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Need Approval Column */}
+        <div
+          data-testid="column-needapproval"
+          className={`h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6 transition-all ${
+            draggingOver === 'needapproval' ? 'bg-blue-100/50 border-blue-400 opacity-50' : ''
+          }`}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleDrop('needapproval')}
+          onDragEnter={handleDragEnter('needapproval')}
+          onDragLeave={handleDragLeave}
+        >
+          <h4 className="font-bold mb-4">Need Approval</h4>
+          <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
+            {tasks.filter(task => task.status === 'needapproval').length === 0 ? (
+              <div className="text-center text-gray-500 dark:text-gray-400 py-8">No tasks need approval</div>
+            ) : (
+              tasks.filter(task => task.status === 'needapproval').map(task => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onDelete={removeTask}
+                  onEdit={editTask}
+                />
+              ))
+            )}
           </div>
         </div>
 
@@ -150,15 +190,18 @@ export default function Home() {
         >
           <h4 className="font-bold mb-4">Done</h4>
           <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
-            {tasks.filter(task => task.status === 'done').map(task => (
-              <TaskCard
-                key={task.id}
-                id={task.id}
-                title={task.title}
-                description={task.description}
-                onDelete={removeTask}
-              />
-            ))}
+            {tasks.filter(task => task.status === 'done').length === 0 ? (
+              <div className="text-center text-gray-500 dark:text-gray-400 py-8">No completed tasks</div>
+            ) : (
+              tasks.filter(task => task.status === 'done').map(task => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onDelete={removeTask}
+                  onEdit={editTask}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>
