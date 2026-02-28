@@ -17,6 +17,7 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [draggingOver, setDraggingOver] = useState<string | null>(null);
   const [tasks, setTasks] = useState<Task[]>([
     { id: 'backlog-1', title: 'Implement user authentication', description: 'Add login/signup with email and password', label: 'Feature', column: 'backlog' },
     { id: 'backlog-2', title: 'Design dashboard layout', description: 'Create wireframes for the main dashboard', label: 'Design', column: 'backlog' },
@@ -44,6 +45,23 @@ export default function Home() {
       column: 'backlog',
     };
     setTasks(prev => [...prev, task]);
+  };
+
+  const handleDrop = (targetColumn: Task['column']) => (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const taskId = e.dataTransfer.getData('text');
+    setTasks(prev => prev.map(task =>
+      task.id === taskId ? { ...task, column: targetColumn } : task
+    ));
+    setDraggingOver(null);
+  };
+
+  const handleDragEnter = (column: string) => () => {
+    setDraggingOver(column);
+  };
+
+  const handleDragLeave = () => {
+    setDraggingOver(null);
   };
 
   if (!mounted) {
@@ -77,7 +95,15 @@ export default function Home() {
       {/* Kanban board */}
       <div className="h-screen grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8">
         {/* Backlog Column */}
-        <div className="h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6">
+        <div
+          className={`h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6 transition-all ${
+            draggingOver === 'backlog' ? 'bg-blue-100/50 border-blue-400 opacity-50' : ''
+          }`}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleDrop('backlog')}
+          onDragEnter={handleDragEnter('backlog')}
+          onDragLeave={handleDragLeave}
+        >
           <div className="flex justify-between items-center mb-4">
             <h4 className="font-bold">Backlog</h4>
             <button
@@ -101,7 +127,15 @@ export default function Home() {
         </div>
 
         {/* In Progress Column */}
-        <div className="h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6">
+        <div
+          className={`h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6 transition-all ${
+            draggingOver === 'inprogress' ? 'bg-blue-100/50 border-blue-400 opacity-50' : ''
+          }`}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleDrop('inprogress')}
+          onDragEnter={handleDragEnter('inprogress')}
+          onDragLeave={handleDragLeave}
+        >
           <h4 className="font-bold mb-4">In Progress</h4>
           <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
             {tasks.filter(task => task.column === 'inprogress').map(task => (
@@ -117,7 +151,15 @@ export default function Home() {
         </div>
 
         {/* Need Approval Column */}
-        <div className="h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6">
+        <div
+          className={`h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6 transition-all ${
+            draggingOver === 'approval' ? 'bg-blue-100/50 border-blue-400 opacity-50' : ''
+          }`}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleDrop('approval')}
+          onDragEnter={handleDragEnter('approval')}
+          onDragLeave={handleDragLeave}
+        >
           <h4 className="font-bold mb-4">Need Approval</h4>
           <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
             {tasks.filter(task => task.column === 'approval').map(task => (
@@ -133,7 +175,15 @@ export default function Home() {
         </div>
 
         {/* Done Column */}
-        <div className="h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6">
+        <div
+          className={`h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6 transition-all ${
+            draggingOver === 'done' ? 'bg-blue-100/50 border-blue-400 opacity-50' : ''
+          }`}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleDrop('done')}
+          onDragEnter={handleDragEnter('done')}
+          onDragLeave={handleDragLeave}
+        >
           <h4 className="font-bold mb-4">Done</h4>
           <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
             {tasks.filter(task => task.column === 'done').map(task => (
