@@ -17,12 +17,12 @@ export default function TaskCard({ title, description, id, onDelete }: TaskCardP
       data-testid={`task-${id}`}
       draggable
       onDragStart={handleDragStart}
-      className="shadow-md rounded-lg p-4 bg-white dark:bg-gray-800 border hover:shadow-lg transition-all cursor-move relative"
+      className="bg-gradient-to-br from-slate-50 to-white dark:from-slate-900/80 dark:to-slate-800 shadow-2xl rounded-3xl p-8 border border-slate-200/50 dark:border-slate-700 hover:shadow-3xl hover:-translate-y-1 transition-all duration-300 cursor-move relative"
     >
       <button
         data-testid={`delete-task-${id}`}
         onClick={() => onDelete(id)}
-        className="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-sm"
+        className="absolute top-4 right-4 opacity-0 hover:opacity-100 text-gray-400 hover:text-red-500 text-sm transition-opacity"
       >
         ✕
       </button>
