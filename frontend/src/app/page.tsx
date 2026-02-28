@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
+import TaskCard from "../components/TaskCard";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -44,32 +45,94 @@ export default function Home() {
         {/* Backlog Column */}
         <div className="h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6">
           <h4 className="font-bold mb-4">Backlog</h4>
-          <div className="h-full min-h-[400px] border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center">
-            <p className="text-gray-500">Drop tasks here</p>
+          <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
+            <TaskCard
+              id="backlog-1"
+              title="Implement user authentication"
+              description="Add login/signup with email and password"
+              label="Feature"
+            />
+            <TaskCard
+              id="backlog-2"
+              title="Design dashboard layout"
+              description="Create wireframes for the main dashboard"
+              label="Design"
+            />
+            <TaskCard
+              id="backlog-3"
+              title="Write API documentation"
+              description="Document all endpoints with examples"
+              label="Documentation"
+            />
           </div>
         </div>
 
         {/* In Progress Column */}
         <div className="h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6">
           <h4 className="font-bold mb-4">In Progress</h4>
-          <div className="h-full min-h-[400px] border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center">
-            <p className="text-gray-500">Drop tasks here</p>
+          <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
+            <TaskCard
+              id="inprogress-1"
+              title="Setup database schema"
+              description="Define tables for users, tasks, projects"
+              label="Backend"
+            />
+            <TaskCard
+              id="inprogress-2"
+              title="Create responsive navbar"
+              description="Make navigation work on mobile"
+              label="Frontend"
+            />
+            <TaskCard
+              id="inprogress-3"
+              title="Add drag and drop"
+              description="Implement DnD for task cards"
+              label="Feature"
+            />
           </div>
         </div>
 
         {/* Need Approval Column */}
         <div className="h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6">
           <h4 className="font-bold mb-4">Need Approval</h4>
-          <div className="h-full min-h-[400px] border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center">
-            <p className="text-gray-500">Drop tasks here</p>
+          <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
+            <TaskCard
+              id="approval-1"
+              title="Review pull request #45"
+              description="Code review for authentication module"
+              label="Review"
+            />
+            <TaskCard
+              id="approval-2"
+              title="Approve budget for server"
+              description="Check costs and approve hosting"
+              label="Admin"
+            />
           </div>
         </div>
 
         {/* Done Column */}
         <div className="h-full bg-white/50 dark:bg-black/50 rounded-xl shadow-lg p-6">
           <h4 className="font-bold mb-4">Done</h4>
-          <div className="h-full min-h-[400px] border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center">
-            <p className="text-gray-500">Drop tasks here</p>
+          <div className="h-full min-h-[400px] space-y-4 overflow-y-auto">
+            <TaskCard
+              id="done-1"
+              title="Fix login bug"
+              description="Resolved issue with password reset"
+              label="Bugfix"
+            />
+            <TaskCard
+              id="done-2"
+              title="Update dependencies"
+              description="Upgrade to latest versions"
+              label="Maintenance"
+            />
+            <TaskCard
+              id="done-3"
+              title="Add unit tests"
+              description="Coverage for core functions"
+              label="Testing"
+            />
           </div>
         </div>
       </div>
